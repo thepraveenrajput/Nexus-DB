@@ -323,24 +323,20 @@ button {
 <div id="tip"></div>
 
 <script>
-// ════════════════════════════════════════════════════════════
+
 //  CONSTANTS
-// ════════════════════════════════════════════════════════════
 const API  = 'http://localhost:8080';
 const DIMS = 16;
 const COL  = { cs:'#00d9ff', math:'#b388ff', food:'#ffb74d', sports:'#69f0ae', doc:'#a6e3a1', default:'#90a4ae' };
 const DIM_COL = ['#00d9ff','#00d9ff','#00d9ff','#00d9ff','#b388ff','#b388ff','#b388ff','#b388ff',
                  '#ffb74d','#ffb74d','#ffb74d','#ffb74d','#69f0ae','#69f0ae','#69f0ae','#69f0ae'];
 
-// ════════════════════════════════════════════════════════════
 //  STATE
-// ════════════════════════════════════════════════════════════
+
 let allItems = [], pcaPoints = [], hitIds = new Set(), queryPt = null;
 let hoverItem = null, pulse = 0, selAlgo = 'hnsw', searchResults = [];
 
-// ════════════════════════════════════════════════════════════
 //  TABS
-// ════════════════════════════════════════════════════════════
 function switchTab(name) {
   document.querySelectorAll('.tab').forEach((t,i) => {
     const names = ['search','docs','rag'];
@@ -350,10 +346,8 @@ function switchTab(name) {
   document.getElementById('tab-' + name).classList.add('on');
   if (name === 'docs') loadDocList();
 }
-
-// ════════════════════════════════════════════════════════════
 //  TEXT → 16-D EMBEDDING (for demo vectors)
-// ════════════════════════════════════════════════════════════
+
 const KW = {
   cs:     ['algorithm','data','tree','graph','array','linked','hash','stack','queue','sort','binary','dynamic','programming','recursion','complexity','pointer','node','search','insert','bfs','dfs','heap','trie'],
   math:   ['calculus','matrix','probability','theorem','integral','derivative','linear','algebra','equation','function','prime','modular','combinatorics','permutation','eigenvalue','statistics','proof'],
@@ -381,9 +375,8 @@ function textToEmbedding(text) {
   return emb;
 }
 
-// ════════════════════════════════════════════════════════════
 //  PCA
-// ════════════════════════════════════════════════════════════
+
 function pca2D(embs) {
   const n = embs.length, d = embs[0].length;
   if (n < 2) return embs.map(() => [0,0]);
@@ -411,9 +404,7 @@ function pca2D(embs) {
   return X.map(x=>[x.reduce((s,v,i)=>s+v*pc1[i],0),x.reduce((s,v,i)=>s+v*pc2[i],0)]);
 }
 
-// ════════════════════════════════════════════════════════════
 //  SCATTER PLOT
-// ════════════════════════════════════════════════════════════
 const sc=document.getElementById('scatter'), ctx=sc.getContext('2d');
 let bounds={minX:-1,maxX:1,minY:-1,maxY:1};
 
@@ -501,9 +492,7 @@ sc.addEventListener('mousemove', e => {
 });
 sc.addEventListener('mouseleave',()=>{hoverItem=null;document.getElementById('tip').style.display='none';});
 
-// ════════════════════════════════════════════════════════════
 //  LOAD DEMO ITEMS
-// ════════════════════════════════════════════════════════════
 async function loadItems() {
   try {
     const r = await fetch(API+'/items');
@@ -520,9 +509,8 @@ async function loadItems() {
   } catch(_) {}
 }
 
-// ════════════════════════════════════════════════════════════
 //  DEMO SEARCH
-// ════════════════════════════════════════════════════════════
+
 function setAlgo(el) {
   document.querySelectorAll('.algo-btn').forEach(b=>b.classList.remove('on'));
   el.classList.add('on'); selAlgo=el.dataset.algo;
@@ -633,10 +621,8 @@ async function deleteItem(id) {
     renderResults(searchResults);await loadItems();loadHNSW();
   } catch(_) {}
 }
-
-// ════════════════════════════════════════════════════════════
 //  DOCUMENT MANAGEMENT
-// ════════════════════════════════════════════════════════════
+
 async function checkOllamaStatus() {
   try {
     const r=await fetch(API+'/status'), d=await r.json();
@@ -727,9 +713,8 @@ async function deleteDoc(id) {
   } catch(_) {}
 }
 
-// ════════════════════════════════════════════════════════════
 //  RAG  — Ask AI
-// ════════════════════════════════════════════════════════════
+
 document.getElementById('ragQuestion').addEventListener('keydown',e=>{
   if(e.key==='Enter'&&e.ctrlKey)askAI();
 });
@@ -846,10 +831,7 @@ function toggleCtx(i) {
   const el=document.getElementById('ctx-'+i);
   el.style.display=el.style.display==='block'?'none':'block';
 }
-
-// ════════════════════════════════════════════════════════════
 //  BOOT
-// ════════════════════════════════════════════════════════════
 resize(); drawFrame();
 loadItems().then(loadHNSW);
 checkOllamaStatus();
