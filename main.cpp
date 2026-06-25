@@ -19,9 +19,7 @@
 static const int DIMS = 16; // demo vectors
 // Doc embeddings dimension is determined at runtime from Ollama's model output
 
-// =====================================================================
 //  DATA TYPES
-// =====================================================================
 
 struct VectorItem
 {
@@ -33,9 +31,8 @@ struct VectorItem
 
 using DistFn = std::function<float(const std::vector<float> &, const std::vector<float> &)>;
 
-// =====================================================================
+
 //  DISTANCE METRICS
-// =====================================================================
 
 float euclidean(const std::vector<float> &a, const std::vector<float> &b)
 {
@@ -79,9 +76,8 @@ DistFn getDistFn(const std::string &m)
    return euclidean;
 }
 
-// =====================================================================
+
 //  BRUTE FORCE
-// =====================================================================
 
 class BruteForce
 {
@@ -112,9 +108,7 @@ public:
    }
 };
 
-// =====================================================================
 //  KD-TREE
-// =====================================================================
 
 struct KDNode
 {
@@ -201,9 +195,8 @@ public:
    }
 };
 
-// =====================================================================
+
 //  HNSW — Hierarchical Navigable Small World
-// =====================================================================
 
 class HNSW
 {
@@ -436,9 +429,7 @@ public:
    size_t size() const { return G.size(); }
 };
 
-// =====================================================================
 //  VECTOR DATABASE  (demo 16D index)
-// =====================================================================
 
 class VectorDB
 {
@@ -573,9 +564,7 @@ public:
    }
 };
 
-// =====================================================================
 //  JSON HELPERS
-// =====================================================================
 
 std::string jS(const std::string &s)
 {
@@ -726,9 +715,7 @@ void cors(httplib::Response &res)
    res.set_header("Access-Control-Allow-Headers", "Content-Type");
 }
 
-// =====================================================================
 //  TEXT CHUNKER
-// =====================================================================
 
 std::vector<std::string> chunkText(const std::string &text,
                                    int chunkWords = 250, int overlapWords = 30)
@@ -763,12 +750,10 @@ std::vector<std::string> chunkText(const std::string &text,
    return chunks;
 }
 
-// =====================================================================
 //  OLLAMA CLIENT  — wraps local Ollama REST API
 //  Install:  https://ollama.com
 //  Models:   ollama pull nomic-embed-text
 //            ollama pull llama3.2
-// =====================================================================
 
 class OllamaClient
 {
@@ -870,9 +855,7 @@ public:
    }
 };
 
-// =====================================================================
 //  DOCUMENT DATABASE  — HNSW over real Ollama embeddings
-// =====================================================================
 
 struct DocItem
 {
@@ -955,9 +938,7 @@ public:
    int getDims() { return dims; }
 };
 
-// =====================================================================
 //  DEMO DATA  (16D categorical vectors)
-// =====================================================================
 
 void loadDemo(VectorDB &db)
 {
@@ -1005,9 +986,7 @@ void loadDemo(VectorDB &db)
              {0.06f, 0.08f, 0.07f, 0.09f, 0.08f, 0.06f, 0.09f, 0.07f, 0.10f, 0.08f, 0.06f, 0.07f, 0.85f, 0.82f, 0.86f, 0.80f}, dist);
 }
 
-// =====================================================================
 //  HTTP SERVER
-// =====================================================================
 
 int main()
 {
@@ -1034,8 +1013,7 @@ int main()
                {
         cors(res); res.status = 204; });
 
-   // ── DEMO VECTOR ENDPOINTS ─────────────────────────────────────────
-
+   // DEMO VECTOR ENDPOINTS
    svr.Get("/search", [&](const httplib::Request &req, httplib::Response &res)
            {
         cors(res);
@@ -1146,7 +1124,7 @@ int main()
         ss << "]}";
         res.set_content(ss.str(), "application/json"); });
 
-   // ── DOCUMENT + RAG ENDPOINTS ──────────────────────────────────────
+   // DOCUMENT + RAG ENDPOINTS 
 
    // POST /doc/insert  {"title":"...","text":"..."}
    // Chunks the text, embeds each chunk via Ollama, stores in DocumentDB
